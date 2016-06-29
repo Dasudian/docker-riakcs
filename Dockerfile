@@ -33,8 +33,8 @@ RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:809
   sed -ri "s|^storage_backend = bitcask|buckets.default.allow_mult = true|" $RIAK_CONFIG
 
 COPY riak-advanced.config /etc/riak/advanced.config
-COPY supervisord-riak.conf /etc/supervisor/conf.d/supervisord-riak.conf
-COPY entrypoint.sh /entrypoint.sh
+COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
+COPY entrypoint.sh /
 
 EXPOSE 8087 8098 8080
 
