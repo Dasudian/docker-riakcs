@@ -35,13 +35,13 @@ RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:809
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAKCS_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $STANCHION_CONFIG && \
   sed -ri "s|^storage_backend = bitcask|buckets.default.allow_mult = true|" $RIAK_CONFIG \
-  sed -ri "s|^## admin.listener = .*|admin.listener = 0.0.0.0:8000|"
+  sed -ri "s|^## admin.listener = .*|admin.listener = 0.0.0.0:8000|" $RIAKCS_CONFIG
 
 COPY riak-advanced.config /etc/riak/advanced.config
 COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
 COPY entrypoint.sh /
 
-EXPOSE 8087 8098 8080
+EXPOSE 8087 8098 8080 8000
 
 VOLUME ["/var/lib/riak","/etc/riak-cs","/etc/stanchion"]
 
