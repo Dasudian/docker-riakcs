@@ -18,7 +18,7 @@ C_IP=$(ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
 sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = $ANONY_USER_CREATION" $RIAKCS_CONFIG
 sed -ri "s|^root_host = .*|root_host = $RIAKCS_ROOT_HOST" $RIAKCS_CONFIG
 
-if [[ "$ADMIN_KEY" != "" ] && [ "$ADMIN_SECRET" != "" ]]; then
+if [[ "$ADMIN_KEY" != "" && "$ADMIN_SECRET" != "" ]]; then
   sed -ri "s|^admin.key = .*|admin.key = $ADMIN_KEY\nadmin.secret = $ADMIN_SECRET|" $RIAKCS_CONFIG
   sed -ri "s|^admin.key = .*|admin.key = $ADMIN_KEY\nadmin.secret = $ADMIN_SECRET|" $STANCHION_CONFIG
 fi
