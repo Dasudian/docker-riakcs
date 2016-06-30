@@ -12,9 +12,10 @@ ENV DEBIAN_FRONTEND="noninteractive" \
   STANCHION_CONFIG="/etc/stanchion/stanchion.conf" \
   NODE_HOST="127.0.0.1" \
   ANONY_USER_CREATION="off" \
-  ADMIN_KEY="" \
-  ADMIN_SECRET="" \
   RIAKCS_ROOT_HOST="s3.amazonaws.com"
+  # Default CONF
+  # ADMIN_KEY="" \
+  # ADMIN_SECRET="" \
 
 # Setup the repositories
 RUN curl -fsSL https://packagecloud.io/install/repositories/basho/riak/script.deb.sh | sudo bash && \
