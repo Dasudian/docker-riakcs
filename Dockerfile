@@ -10,7 +10,11 @@ ENV DEBIAN_FRONTEND="noninteractive" \
   RIAK_CONFIG="/etc/riak/riak.conf" \
   RIAKCS_CONFIG="/etc/riak-cs/riak-cs.conf" \
   STANCHION_CONFIG="/etc/stanchion/stanchion.conf" \
-  NODE_HOST="127.0.0.1"
+  NODE_HOST="127.0.0.1" \
+  ANONY_USER_CREATION="off" \
+  ADMIN_KEY="" \
+  ADMIN_SECRET="" \
+  RIAKCS_ROOT_HOST="s3.amazonaws.com"
 
 # Setup the repositories
 RUN curl -fsSL https://packagecloud.io/install/repositories/basho/riak/script.deb.sh | sudo bash && \
@@ -30,7 +34,8 @@ RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:809
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAK_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAKCS_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $STANCHION_CONFIG && \
-  sed -ri "s|^storage_backend = bitcask|buckets.default.allow_mult = true|" $RIAK_CONFIG
+  sed -ri "s|^storage_backend = bitcask|buckets.default.allow_mult = true|" $RIAK_CONFIG \
+  sed -ri "s|^## admin.listener = .*|admin.listener = 0.0.0.0:8000|"
 
 COPY riak-advanced.config /etc/riak/advanced.config
 COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
