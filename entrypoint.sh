@@ -19,8 +19,10 @@ sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = $ANONY_USER_C
 sed -ri "s|^root_host = .*|root_host = $RIAKCS_ROOT_HOST|" $RIAKCS_CONFIG
 
 if [[ -n $ADMIN_KEY && -n $ADMIN_SECRET ]]; then
-  sed -ri "s|^admin.key = .*|admin.key = $ADMIN_KEY\nadmin.secret = $ADMIN_SECRET|" $RIAKCS_CONFIG
-  sed -ri "s|^admin.key = .*|admin.key = $ADMIN_KEY\nadmin.secret = $ADMIN_SECRET|" $STANCHION_CONFIG
+  sed -ri "s|^admin.key = .*|admin.key = $ADMIN_KEY|" $RIAKCS_CONFIG
+  sed -ri "s|^admin.secret = .*|admin.secret = $ADMIN_SECRET|" $RIAKCS_CONFIG
+  sed -ri "s|^admin.key = .*|admin.key = $ADMIN_KEY|" $STANCHION_CONFIG
+  sed -ri "s|^admin.secret = .*|admin.secret = $ADMIN_SECRET|" $STANCHION_CONFIG
 fi
 
 if [ "$1" = "supervisord" ]; then
