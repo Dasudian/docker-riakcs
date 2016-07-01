@@ -36,8 +36,8 @@ RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:809
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAKCS_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $STANCHION_CONFIG && \
   sed -ri "s|^storage_backend = bitcask|buckets.default.allow_mult = true|" $RIAK_CONFIG && \
-  sed -ri "s|^admin.key = .*|admin.key = admin-key\nadmin.secret = admin-secret" $RIAKCS_CONFIG && \
-  sed -ri "s|^admin.key = .*|admin.key = admin-key\nadmin.secret = admin-secret" $STANCHION_CONFIG
+  sed -ri "s|^admin.key = .*|admin.key = admin-key\nadmin.secret = admin-secret|" $RIAKCS_CONFIG && \
+  sed -ri "s|^admin.key = .*|admin.key = admin-key\nadmin.secret = admin-secret|" $STANCHION_CONFIG
 
 COPY riak-advanced.config /etc/riak/advanced.config
 COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
