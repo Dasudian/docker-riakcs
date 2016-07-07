@@ -25,6 +25,9 @@ if [[ -n $ADMIN_KEY && -n $ADMIN_SECRET ]]; then
   sed -ri "s|^admin.secret = .*|admin.secret = $ADMIN_SECRET|" $STANCHION_CONFIG
 fi
 
+# Set the permision for the riak data directory
+chown riak:riak /var/lib/riak
+
 if [ "$1" = "supervisord" ]; then
   supervisord -n &
   echo "Container's IP is $C_IP ."
