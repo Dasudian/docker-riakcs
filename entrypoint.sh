@@ -14,7 +14,6 @@ C_IP=$(ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
 # fi
 
 # sed -ri "s|nodename = .*|nodename = riak@$NODE_HOST|" $RIAK_CONFIG
-# sed -ri "s|storage_backend = .*|storage_backend = $STORAGE_BACKEND|" $RIAK_CONFIG
 sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = $ANONY_USER_CREATION|" $RIAKCS_CONFIG
 sed -ri "s|^root_host = .*|root_host = $RIAKCS_ROOT_HOST|" $RIAKCS_CONFIG
 

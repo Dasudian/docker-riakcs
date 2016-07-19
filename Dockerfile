@@ -3,10 +3,9 @@ FROM buildpack-deps:trusty-curl
 MAINTAINER Mengz <mz@dasudian.com>
 
 ENV DEBIAN_FRONTEND="noninteractive" \
-  RIAK_VERSION="2.1.4-1" \
+  RIAK_VERSION="2.1.3-1" \
   RIAKCS_VERSION="2.1.1-1" \
   STANCHION_VERSION="2.1.1-1" \
-  STORAGE_BACKEND="leveldb" \
   RIAK_CONFIG="/etc/riak/riak.conf" \
   RIAKCS_CONFIG="/etc/riak-cs/riak-cs.conf" \
   STANCHION_CONFIG="/etc/stanchion/stanchion.conf" \
@@ -45,7 +44,7 @@ COPY entrypoint.sh /
 
 EXPOSE 8087 8098 8080
 
-VOLUME ["/var/lib/riak","/etc/riak-cs","/etc/stanchion"]
+VOLUME ["/var/lib/riak"]
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["supervisord"]
