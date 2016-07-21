@@ -11,7 +11,9 @@ ENV DEBIAN_FRONTEND="noninteractive" \
   STANCHION_CONFIG="/etc/stanchion/stanchion.conf" \
   NODE_HOST="127.0.0.1" \
   ANONY_USER_CREATION="off" \
-  RIAKCS_ROOT_HOST="s3.amazonaws.com"
+  ROOT_HOST="s3.amazonaws.com" \
+  ACCESS_LOG="on" \
+  LOG_CONOSLE_LEVEL="error"
   # Default CONF
   # ADMIN_KEY="" \
   # ADMIN_SECRET="" \
@@ -40,6 +42,8 @@ RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:809
 
 COPY riak-advanced.config /etc/riak/advanced.config
 COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
+COPY supervisord-riak.conf /etc/supervisor/conf.d/
+COPY supervisord-stanchion.conf /etc/supervisor/conf.d/
 COPY entrypoint.sh /
 
 EXPOSE 8087 8098 8080

@@ -14,8 +14,10 @@ C_IP=$(ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
 # fi
 
 # sed -ri "s|nodename = .*|nodename = riak@$NODE_HOST|" $RIAK_CONFIG
-sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = $ANONY_USER_CREATION|" $RIAKCS_CONFIG
-sed -ri "s|^root_host = .*|root_host = $RIAKCS_ROOT_HOST|" $RIAKCS_CONFIG
+sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = ${ANONY_USER_CREATION}|" ${RIAKCS_CONFIG}
+sed -ri "s|^root_host = .*|root_host = ${ROOT_HOST}|" ${RIAKCS_CONFIG}
+sed -ri "s|^log.access = .*|log.access = ${ACCESS_LOG}|" ${RIAKCS_CONFIG}
+sed -ri "s|^log.console.level = .*|log.console.level = ${LOG_CONOSLE_LEVEL}|" ${RIAKCS_CONFIG}
 
 if [[ -n $ADMIN_KEY && -n $ADMIN_SECRET ]]; then
   sed -ri "s|^admin.key = .*|admin.key = $ADMIN_KEY|" $RIAKCS_CONFIG
@@ -27,10 +29,9 @@ fi
 # Set the permision for the riak data directory
 chown riak:riak /var/lib/riak
 
-if [ "$1" = "supervisord" ]; then
-  supervisord -n &
+if [[ "$1" = "supervisord" ]]; then
   echo "Container's IP is $C_IP ."
-  fg %1
+  supervisord -c /etc/supervisor/supervisord.conf
 else
   exec $@
 fi
