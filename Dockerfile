@@ -45,7 +45,7 @@ COPY supervisord-init.conf /etc/supervisor/conf.d/
 COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
 COPY supervisord-riak.conf /etc/supervisor/conf.d/
 COPY supervisord-stanchion.conf /etc/supervisor/conf.d/
-COPY entrypoint.sh /
+COPY entrypoint /
 
 EXPOSE 8098 8080
 
