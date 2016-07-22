@@ -41,14 +41,15 @@ RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:809
   sed -ri "s|^admin.key = .*|admin.key = admin-key\nadmin.secret = admin-secret|" $STANCHION_CONFIG
 
 COPY riak-advanced.config /etc/riak/advanced.config
+COPY supervisord-init.conf /etc/supervisor/conf.d/
 COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
 COPY supervisord-riak.conf /etc/supervisor/conf.d/
 COPY supervisord-stanchion.conf /etc/supervisor/conf.d/
 COPY entrypoint.sh /
 
-EXPOSE 8087 8098 8080
+EXPOSE 8098 8080
 
 VOLUME ["/var/lib/riak"]
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]
