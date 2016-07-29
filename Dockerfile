@@ -9,14 +9,17 @@ ENV DEBIAN_FRONTEND="noninteractive" \
   RIAK_CONFIG="/etc/riak/riak.conf" \
   RIAKCS_CONFIG="/etc/riak-cs/riak-cs.conf" \
   STANCHION_CONFIG="/etc/stanchion/stanchion.conf" \
-  NODE_HOST="127.0.0.1" \
-  ANONY_USER_CREATION="off" \
-  ROOT_HOST="s3.amazonaws.com" \
-  ACCESS_LOG="on" \
-  LOG_CONOSLE_LEVEL="error"
-  # Default CONF
-  # ADMIN_KEY="" \
-  # ADMIN_SECRET="" \
+  STANCHION_NODE="yes" \
+  ADMIN_USER="admin" \
+  ADMIN_EMAIL="admin@maildomain.com"
+  
+# Docker control environment
+# NODE_HOST="127.0.0.1" for cluster deployment
+# ROOT_HOST="s3.amazonaws.com"
+# ADMIN_KEY=""
+# ADMIN_SECRET=""
+# PRIMARY_NOTE_HOST
+
 
 # Setup the repositories
 RUN curl -fsSL https://packagecloud.io/install/repositories/basho/riak/script.deb.sh | sudo bash && \
@@ -32,11 +35,12 @@ RUN apt-get update && \
 
 RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:8098|" $RIAK_CONFIG && \
   sed -ri "s|^listener.protobuf.internal = .*|listener.protobuf.internal = 0.0.0.0:8087|" $RIAK_CONFIG && \
+  sed -ri "s|^listener = .*|listener = 0.0.0.0:8500|" $STANCHION_CONFIG && \
   sed -ri "s|^listener = .*|listener = 0.0.0.0:8080|" $RIAKCS_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAK_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAKCS_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $STANCHION_CONFIG && \
-  sed -ri "s|^storage_backend = bitcask|buckets.default.allow_mult = true|" $RIAK_CONFIG && \
+  sed -ri "s|^storage_backend = .*|buckets.default.allow_mult = true|" $RIAK_CONFIG && \
   sed -ri "s|^admin.key = .*|admin.key = admin-key\nadmin.secret = admin-secret|" $RIAKCS_CONFIG && \
   sed -ri "s|^admin.key = .*|admin.key = admin-key\nadmin.secret = admin-secret|" $STANCHION_CONFIG
 
@@ -45,8 +49,8 @@ COPY supervisord-init.conf /etc/supervisor/conf.d/
 COPY supervisord-riakcs.conf /etc/supervisor/conf.d/
 COPY supervisord-riak.conf /etc/supervisor/conf.d/
 COPY supervisord-stanchion.conf /etc/supervisor/conf.d/
-COPY entrypoint /
-COPY init.sh /
+COPY docker-entrypoint.sh /entrypoint
+COPY init-riakcs.sh /init-riakcs
 
 EXPOSE 8098 8080
 
