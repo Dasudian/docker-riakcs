@@ -71,8 +71,6 @@ _replace_admin() {
   sed -ri "s|^admin.secret = admin-secret|admin.secret = ${ADMIN_SECRET}|" ${STANCHION_CONFIG}
 }
 
-
-
 if [[ -n ${NODE_HOST} ]]; then
   if [[ ${NODE_HOST} =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]];then
     echo "Use the IP as the NODE_HOST, the nodename of riak is riak@$NODE_HOST"
@@ -110,37 +108,37 @@ if [[ "${STANCHION_NODE}" == "yes" ]]; then
     sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = on|" ${STANCHION_CONFIG}
     
     $(_init_with_stanchion)
-    sleep 5
-    echo "Create the admin key ..."
-    CMD=$(cat <<EOF
-curl -s -XPOST -H 'Content-Type: application/json' \
-http://localhost:8080/riak-cs/user \
--d '{"email":"${ADMIN_EMAIL}","name":"${ADMIN_USER}"}'
-EOF
-    )
+#     sleep 5
+#     echo "Create the admin key ..."
+#     CMD=$(cat <<EOF
+# curl -s -XPOST -H 'Content-Type: application/json' \
+# http://localhost:8080/riak-cs/user \
+# -d '{"email":"${ADMIN_EMAIL}","name":"${ADMIN_USER}"}'
+# EOF
+#     )
     
-    eval ${CMD} | python -mjson.tool > /var/lib/riak/admin.json
-    if [[ $? -ne 0 ]]; then
-      echo "Create the admin key failed!"
-      /usr/bin/supervisorctl stop riak-cs stanchion riak
-      exit 1
-    fi
-    chown riak:riak /var/lib/riak/admin.json
-    $(_replace_admin)
-    sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = off|" ${STANCHION_CONFIG}
-    /usr/bin/supervisorctl restart stanchion riak-cs
-    if [[ $? -ne 0 ]]; then
-      echo "Restart stanchion & riak-cs failed!"
-      /usr/bin/supervisorctl stop riak
-      exit 1
-    fi
+    # eval ${CMD} | python -mjson.tool > /var/lib/riak/admin.json
+    # if [[ $? -ne 0 ]]; then
+    #   echo "Create the admin key failed!"
+    #   /usr/bin/supervisorctl stop riak-cs stanchion riak
+    #   exit 1
+    # fi
+    # chown riak:riak /var/lib/riak/admin.json
+    # $(_replace_admin)
+    # sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = off|" ${STANCHION_CONFIG}
+    # /usr/bin/supervisorctl restart stanchion riak-cs
+    # if [[ $? -ne 0 ]]; then
+    #   echo "Restart stanchion & riak-cs failed!"
+    #   /usr/bin/supervisorctl stop riak
+    #   exit 1
+    # fi
     
-    echo ""
-    echo "==============================================="
-    echo "Admin Key and Secre are below:"
-    cat ${ADMIN_JSON_FILE}
-    echo "==============================================="
-    echo "The primary riakcs node started!"
+    # echo ""
+    # echo "==============================================="
+    # echo "Admin Key and Secre are below:"
+    # cat ${ADMIN_JSON_FILE}
+    # echo "==============================================="
+    # echo "The primary riakcs node started!"
   fi
 else
   # The cluster node without stanchion
