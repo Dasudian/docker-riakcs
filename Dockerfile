@@ -35,7 +35,7 @@ RUN apt-get update && \
 
 RUN sed -ri "s|^listener.http.internal = .*|listener.http.internal = 0.0.0.0:8098|" $RIAK_CONFIG && \
   sed -ri "s|^listener.protobuf.internal = .*|listener.protobuf.internal = 0.0.0.0:8087|" $RIAK_CONFIG && \
-  sed -ri "s|^listener = .*|listener = 0.0.0.0:8500|" $STANCHION_CONFIG && \
+  sed -ri "s|^listener = .*|listener = 0.0.0.0:8085|" $STANCHION_CONFIG && \
   sed -ri "s|^listener = .*|listener = 0.0.0.0:8080|" $RIAKCS_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAK_CONFIG && \
   sed -ri "s|^distributed_cookie = .*|distributed_cookie = riak-cs|" $RIAKCS_CONFIG && \

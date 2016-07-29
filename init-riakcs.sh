@@ -46,6 +46,7 @@ _init_without_stanchion() {
   if [[ $? -ne 0 ]]; then
     echo "Join the cluster ..."
     riak-admin cluster join riak@${PRIMARY_NOTE_HOST}
+    riak-admin cluster plan
     riak-admin cluster commit
   fi
 
@@ -105,45 +106,46 @@ if [[ "${STANCHION_NODE}" == "yes" ]]; then
     echo "==============================================="
     echo "The primary riakcs node started!"
   else
-    sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = on|" ${STANCHION_CONFIG}
+    sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = on|" ${RIAKCS_CONFIG}
     
     $(_init_with_stanchion)
-#     sleep 5
-#     echo "Create the admin key ..."
-#     CMD=$(cat <<EOF
-# curl -s -XPOST -H 'Content-Type: application/json' \
-# http://localhost:8080/riak-cs/user \
-# -d '{"email":"${ADMIN_EMAIL}","name":"${ADMIN_USER}"}'
-# EOF
-#     )
+    sleep 5
+    echo "Create the admin key ..."
+    CMD=$(cat <<EOF
+curl -s -XPOST -H 'Content-Type: application/json' \
+http://localhost:8080/riak-cs/user \
+-d '{"email":"${ADMIN_EMAIL}","name":"${ADMIN_USER}"}'
+EOF
+    )
     
-    # eval ${CMD} | python -mjson.tool > /var/lib/riak/admin.json
-    # if [[ $? -ne 0 ]]; then
-    #   echo "Create the admin key failed!"
-    #   /usr/bin/supervisorctl stop riak-cs stanchion riak
-    #   exit 1
-    # fi
-    # chown riak:riak /var/lib/riak/admin.json
-    # $(_replace_admin)
-    # sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = off|" ${STANCHION_CONFIG}
-    # /usr/bin/supervisorctl restart stanchion riak-cs
-    # if [[ $? -ne 0 ]]; then
-    #   echo "Restart stanchion & riak-cs failed!"
-    #   /usr/bin/supervisorctl stop riak
-    #   exit 1
-    # fi
+    RET=$(eval ${CMD})
+    if [[ $? -ne 0 ]]; then
+      echo "Create the admin key failed!"
+      /usr/bin/supervisorctl stop riak-cs stanchion riak
+      exit 1
+    fi
+    echo ${RET}  | python -mjson.tool > ${ADMIN_JSON_FILE}
+    chown riak:riak ${ADMIN_JSON_FILE}
+    $(_replace_admin)
+    sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = off|" ${RIAKCS_CONFIG}
+    /usr/bin/supervisorctl restart stanchion riak-cs
+    if [[ $? -ne 0 ]]; then
+      echo "Restart stanchion & riak-cs failed!"
+      /usr/bin/supervisorctl stop riak
+      exit 1
+    fi
     
-    # echo ""
-    # echo "==============================================="
-    # echo "Admin Key and Secre are below:"
-    # cat ${ADMIN_JSON_FILE}
-    # echo "==============================================="
-    # echo "The primary riakcs node started!"
+    echo ""
+    echo "==============================================="
+    echo "Admin Key and Secre are below:"
+    cat ${ADMIN_JSON_FILE}
+    echo "==============================================="
+    echo "The primary riakcs node started!"
   fi
 else
   # The cluster node without stanchion
   $(_replace_admin)
-  sed -ri "s|^stanchion_host = 127.0.0.1:8500|stanchion_host = ${PRIMARY_NOTE_HOST}:8500|" ${RIAKCS_CONFIG}
+  sed -ri "s|^stanchion_host = 127.0.0.1:8085|stanchion_host = ${PRIMARY_NOTE_HOST}:8085|" ${RIAKCS_CONFIG}
   $(_init_without_stanchion)
   
   echo ""
