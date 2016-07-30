@@ -95,9 +95,9 @@ if [[ "${STANCHION_NODE}" == "yes" ]]; then
   # The main riakcs node which should run stanchion
   # Check if already creat the admin key
   if [[ -e ${ADMIN_JSON_FILE} ]]; then
-    $(_replace_admin)
+    _replace_admin
     
-    $(_init_with_stanchion)
+    _init_with_stanchion
     
     echo ""
     echo "==============================================="
@@ -108,7 +108,8 @@ if [[ "${STANCHION_NODE}" == "yes" ]]; then
   else
     sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = on|" ${RIAKCS_CONFIG}
     
-    $(_init_with_stanchion)
+    _init_with_stanchion
+    
     sleep 5
     echo "Create the admin key ..."
     CMD=$(cat <<EOF
@@ -126,7 +127,9 @@ EOF
     fi
     echo ${RET}  | python -mjson.tool > ${ADMIN_JSON_FILE}
     chown riak:riak ${ADMIN_JSON_FILE}
-    $(_replace_admin)
+    
+    _replace_admin
+    
     sed -ri "s|^anonymous_user_creation = .*|anonymous_user_creation = off|" ${RIAKCS_CONFIG}
     /usr/bin/supervisorctl restart stanchion riak-cs
     if [[ $? -ne 0 ]]; then
@@ -144,9 +147,11 @@ EOF
   fi
 else
   # The cluster node without stanchion
-  $(_replace_admin)
+  _replace_admin
+  
   sed -ri "s|^stanchion_host = 127.0.0.1:8085|stanchion_host = ${PRIMARY_NOTE_HOST}:8085|" ${RIAKCS_CONFIG}
-  $(_init_without_stanchion)
+  
+  _init_without_stanchion
   
   echo ""
   echo "==============================================="
